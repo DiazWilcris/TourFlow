@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} gira | TourFlow{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h2 mb-1">{{ action }} gira</h1>
+      <p class="text-muted mb-0">Completa la información de planificación.</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('dashboard') }}">Volver</a>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+      <form method="post" id="tour-form">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label" for="name">Nombre de la gira *</label>
+            <input class="form-control" id="name" name="name" maxlength="100" required value="{{ tour.get('name', '') }}">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="tour_type">Tipo de gira *</label>
+            <select class="form-select" id="tour_type" name="tour_type" required>
+              <option value="">Seleccionar</option>
+              {% for option in ['Escolar', 'Universitaria', 'Corporativa', 'Recreativa'] %}
+                <option {% if tour.get('tour_type') == option %}selected{% endif %}>{{ option }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6"><label class="form-label" for="destination">Destino *</label><input class="form-control" id="destination" name="destination" required value="{{ tour.get('destination', '') }}"></div>
+          <div class="col-md-3"><label class="form-label" for="departure_date">Fecha de salida *</label><input class="form-control" id="departure_date" name="departure_date" type="date" required value="{{ tour.get('departure_date', '') }}"></div>
+          <div class="col-md-3"><label class="form-label" for="return_date">Fecha de regreso *</label><input class="form-control" id="return_date" name="return_date" type="date" required value="{{ tour.get('return_date', '') }}"></div>
+          <div class="col-md-4"><label class="form-label" for="people_count">Cantidad de personas *</label><input class="form-control" id="people_count" name="people_count" type="number" min="1" required value="{{ tour.get('people_count', '') }}"></div>
+          <div class="col-md-4">
+            <label class="form-label" for="transport">Transporte *</label>
+            <select class="form-select" id="transport" name="transport" required>
+              <option value="">Seleccionar</option>
+              {% for option in ['Autobús', 'Avión', 'Barco', 'Vehículo privado'] %}<option {% if tour.get('transport') == option %}selected{% endif %}>{{ option }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="status">Estado *</label>
+            <select class="form-select" id="status" name="status" required>
+              <option value="">Seleccionar</option>
+              {% for option in ['Planificada', 'Confirmada', 'En curso', 'Finalizada', 'Cancelada'] %}<option {% if tour.get('status') == option %}selected{% endif %}>{{ option }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6"><label class="form-label" for="total_budget">Presupuesto total (RD$) *</label><input class="form-control" id="total_budget" name="total_budget" type="number" min="0.01" step="0.01" required value="{{ tour.get('total_budget', '') }}"></div>
+          <div class="col-md-6"><label class="form-label" for="amount_collected">Monto recaudado (RD$) *</label><input class="form-control" id="amount_collected" name="amount_collected" type="number" min="0" step="0.01" required value="{{ tour.get('amount_collected', '0') }}"></div>
+        </div>
+        <div class="mt-4">
+          <button class="btn btn-primary" id="save-tour-button" type="submit">{{ action }} gira</button>
+          <a class="btn btn-link" href="{{ url_for('dashboard') }}">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

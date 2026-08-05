@@ -1,0 +1,6 @@
+body { min-height: 100vh; }
+.navbar-brand { letter-spacing: .2px; }
+.stat-card { border: 0; box-shadow: 0 .125rem .35rem rgba(0,0,0,.07); }
+.stat-card span { display: block; color: #6c757d; font-size: .84rem; }
+.stat-card strong { display: block; color: #1f3b64; font-size: 1.25rem; margin-top: .35rem; }
+table small { font-size: .82rem; }

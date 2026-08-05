@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | TourFlow{% endblock %}
+
+{% block content %}
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+      <h1 class="h2 mb-1">Dashboard de giras</h1>
+      <p class="text-muted mb-0">Panorama logístico y financiero.</p>
+    </div>
+    <a id="new-tour-button" class="btn btn-primary" href="{{ url_for('create_tour') }}">+ Nueva gira</a>
+  </div>
+
+  <div class="row g-3 mb-4">
+    {% for label, value, testid in [
+      ('Total de giras', stats.total_tours, 'stat-total-tours'),
+      ('Total de personas', stats.total_people, 'stat-total-people'),
+      ('Presupuesto', 'RD$' ~ '{:,.2f}'.format(stats.total_budget), 'stat-budget'),
+      ('Recaudado', 'RD$' ~ '{:,.2f}'.format(stats.total_collected), 'stat-collected'),
+      ('Pendiente', 'RD$' ~ '{:,.2f}'.format(stats.total_budget - stats.total_collected), 'stat-pending')
+    ] %}
+      <div class="col-sm-6 col-lg">
+        <div class="card stat-card h-100">
+          <div class="card-body"><span>{{ label }}</span><strong id="{{ testid }}">{{ value }}</strong></div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <form class="row g-2 mb-3" method="get">
+        <div class="col-md-6">
+          <input class="form-control" id="search-input" name="q" value="{{ query }}" placeholder="Buscar por nombre, destino o tipo...">
+        </div>
+        <div class="col-auto"><button class="btn btn-outline-primary" id="search-button" type="submit">Buscar</button></div>
+        {% if query %}<div class="col-auto"><a class="btn btn-link" href="{{ url_for('dashboard') }}">Limpiar</a></div>{% endif %}
+      </form>
+
+      {% if tours %}
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr><th>Gira</th><th>Fechas</th><th>Personas</th><th>Finanzas</th><th>Indicador</th><th class="text-end">Acciones</th></tr>
+            </thead>
+            <tbody>
+              {% for tour in tours %}
+                <tr data-testid="tour-row-{{ tour.id }}">
+                  <td><strong>{{ tour.name }}</strong><br><small class="text-muted">{{ tour.tour_type }} · {{ tour.destination }}</small></td>
+                  <td>{{ tour.departure_date }}<br><small class="text-muted">al {{ tour.return_date }}</small></td>
+                  <td>{{ tour.people_count }}</td>
+                  <td><small>Presupuesto: RD${{ '{:,.2f}'.format(tour.total_budget) }}</small><br><small>Pendiente: <strong>RD${{ '{:,.2f}'.format(tour.pending) }}</strong></small></td>
+                  <td><span class="badge text-bg-{{ tour.indicator_class }}" data-testid="indicator-{{ tour.id }}">{{ tour.indicator }}</span></td>
+                  <td class="text-end">
+                    <a class="btn btn-sm btn-outline-primary" id="edit-tour-{{ tour.id }}" href="{{ url_for('edit_tour', tour_id=tour.id) }}">Editar</a>
+                    <form class="d-inline" method="post" action="{{ url_for('delete_tour', tour_id=tour.id) }}" onsubmit="return confirm('¿Seguro que deseas eliminar esta gira?');">
+                      <button class="btn btn-sm btn-outline-danger" id="delete-tour-{{ tour.id }}" type="submit">Eliminar</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% elif query %}
+        <p class="text-center text-muted py-4" id="empty-search">No se encontraron resultados.</p>
+      {% else %}
+        <p class="text-center text-muted py-4" id="empty-state">No hay registros disponibles.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
